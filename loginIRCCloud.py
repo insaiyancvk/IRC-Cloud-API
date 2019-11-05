@@ -1,42 +1,76 @@
 import requests
 
-r = requests.post("https://www.irccloud.com/chat/auth-formtoken").json()
+cid = 000000
 
-token = r['token']
+def getToken():
 
-print(token)
+    r = requests.post("https://www.irccloud.com/chat/auth-formtoken").json()
 
-loginURL = "https://www.irccloud.com/chat/login"
+    token = r['token']
+    
+    return token
 
-data = {
-    'email':'cvamshik1@gmail.com',
-    'password':'CVKvamsi111!',
+def getSessionID(email,password,token):
+    loginURL = "https://www.irccloud.com/chat/login"
+
+    data = {
+    'email': email,
+    'password': password,
     'token':token
     }
 
-headers = {
-    'content-type':'application/x-www-form-urlencoded',
-    'x-auth-formtoken':token
+    headers = {
+        'content-type':'application/x-www-form-urlencoded',
+        'x-auth-formtoken':token
+        }
+    auth = requests.post(loginURL,data = data, headers = headers).json()   
+    
+    if auth['success'] == True:
+        session = auth['session']
+        return session
+    else:
+        return False
+
+def sendMessage(uname,session,cid,msg):
+
+    dataSendMessage = {
+        "msg":"/msg "+uname+" "+msg,
+        "to":"*",
+        "cid":cid,
+        "session":session
     }
 
-auth = requests.post(loginURL,data = data, headers = headers).json()
+    sendMsgURL = "https://www.irccloud.com/chat/say"
 
-session = auth['session']
-print(session)
+    cookies = {'session':session}
 
-cid = 1029767
+    sendMsg = requests.post(sendMsgURL,data = dataSendMessage, cookies = cookies).json()
+    
+    if sendMsg['success'] == True:
+        return True
+    else:
+        return sendMsg
 
-dataSendMessage = {
-    "msg":"/msg akshay from the script.",
-    "to":"*",
-    "cid":cid,
-    "session":session
-}
+def main():
+    token = getToken()
+    email=input("Enter the email id and password to log in : ")
+    #email = 'xxxx'
+    password = input("Password: ")
+    #password = 'xxxx'
 
-sendMsgURL = "https://www.irccloud.com/chat/say"
+    sessionID = getSessionID(email,password,token)
 
-cookies = {'session':session}
+    #print(sessionID,resp)
 
-sendMsg = requests.post(sendMsgURL,data = dataSendMessage, cookies = cookies).json()
+    if sessionID!=False:
 
-print(sendMsg)
+        msg = input("Enter the message : ")
+        
+        uname = input("Enter the nick of the receiver : ")
+
+        response = sendMessage(uname,sessionID,cid,msg)
+    
+    else:
+        print("Authentication Failed")
+
+main()
