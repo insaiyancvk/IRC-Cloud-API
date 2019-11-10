@@ -5,7 +5,7 @@ from collections import deque
 
 streamURL = 'https://www.irccloud.com/chat/stream'
 
-cookies = {'session':'8.eed80421609502e038cd384e3c254a77'}
+cookies = {'session':''} #enter the session id
 
 stream = requests.get('https://www.irccloud.com/chat/stream', cookies = cookies,stream=True)
 
@@ -16,4 +16,8 @@ for line in stream.iter_lines():
         daBackloginJSON = daBacklog.json()
         break
 
-print(daBackloginJSON)
+for event in daBackloginJSON:
+    if event['type']=='makeserver':
+        cid = event['cid']
+
+print(cid)
