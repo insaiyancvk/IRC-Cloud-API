@@ -1,7 +1,5 @@
 import requests
 
-cid = 000000
-
 def getToken():
 
     r = requests.post("https://www.irccloud.com/chat/auth-formtoken").json()
@@ -31,25 +29,6 @@ def getSessionID(email,password,token):
     else:
         return False
 
-def sendMessage(uname,session,cid,msg):
-
-    dataSendMessage = {
-        "msg":"/msg "+uname+" "+msg,
-        "to":"*",
-        "cid":cid,
-        "session":session
-    }
-
-    sendMsgURL = "https://www.irccloud.com/chat/say"
-
-    cookies = {'session':session}
-
-    sendMsg = requests.post(sendMsgURL,data = dataSendMessage, cookies = cookies).json()
-    
-    if sendMsg['success'] == True:
-        return True
-    else:
-        return sendMsg
 
 def main():
     token = getToken()
@@ -62,15 +41,8 @@ def main():
 
     #print(sessionID,resp)
 
-    if sessionID!=False:
-
-        msg = input("Enter the message : ")
-        
-        uname = input("Enter the nick of the receiver : ")
-
-        response = sendMessage(uname,sessionID,cid,msg)
+    if sessionID==False:
     
-    else:
         print("Authentication Failed")
 
 main()
