@@ -2,8 +2,6 @@ import requests
 import json
 from collections import deque
 
-sessionID = '8.222e5f6e8e73257012ca773f369e276a'
-
 neid=0
 cid = 0
 
@@ -119,12 +117,11 @@ def auth():
     sessionID = getSessionID(email,password,token)
 
     return sessionID
-#def chat():
 
 
 def main():
 
-    #sessionID = auth()
+    sessionID = auth()
     global cid
 
     sessionID = '8.222e5f6e8e73257012ca773f369e276a'
@@ -144,4 +141,3 @@ def main():
     else:
         print("Authentication Failed")
 main()
-#getCID(sessionID)
