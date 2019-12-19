@@ -1,5 +1,5 @@
 # IRC-Cloud-API
 
-This is a project where I will be using the api of irccloud to be able to use all of it's features without having to open the irccloud app.
+This will be able to send messages to a user disconnected from server till the user reconnects.
 
 The work is in progress
