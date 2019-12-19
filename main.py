@@ -1,6 +1,6 @@
 import requests
 import json
-from collections import deque
+from collections import dequencv
 
 neid=0
 cid = 0
