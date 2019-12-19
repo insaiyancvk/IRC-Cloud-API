@@ -1,13 +1,20 @@
- 
 import requests
 import json
 from collections import deque
 
+sessionID = '8.222e5f6e8e73257012ca773f369e276a'
+
+neid=0
+cid = 0
+
 def getCID(sessionID):
+
+    global neid,cid
+    eid = 0
 
     streamURL = 'https://www.irccloud.com/chat/stream'
 
-    cookies = {'session': sessionID}
+    cookies = {'session':sessionID}
 
     stream = requests.get('https://www.irccloud.com/chat/stream', cookies = cookies,stream=True)
 
@@ -15,26 +22,49 @@ def getCID(sessionID):
 
         message = json.loads(line.decode('utf-8'))
 
-        if message['type']== 'oob_include':
+        if message['type']=='stat_user':
+
+            bufferID = message['last_selected_bid']
+
+        elif message['type']== 'oob_include':
+
+            url = message['url']
 
             daBacklog = requests.get('https://www.irccloud.com'+message['url'],cookies=cookies)
-            
+
             daBackloginJSON = daBacklog.json()
             
             break
+    
+    
+    
+    file1 = open("deBacklog.txt","w")
+    file1.write(daBacklog.text)
+    file1.close()
 
     for event in daBackloginJSON:
 
         if event['type']=='makeserver':
             
             cid = event['cid']
-    
-    return cid
+        
+        elif event['bid']==bufferID and event['type']=='buffer_msg':
+                bid = event['bid']
+                eid = event['eid']
+
+    for event in daBackloginJSON:
+
+        if event['eid'] == eid and event['type'] == 'buffer_msg':
+            msg = event['msg']
+            if neid!=eid:
+                neid=eid
+                print(msg,bufferID)
+            getCID(sessionID)    
 
 
 def getToken():
 
-    r = requests.post("https://www.irccloud.com/chcvat/auth-formtoken").json()
+    r = requests.post("https://www.irccloud.com/chat/auth-formtoken").json()
 
     token = r['token']
     
@@ -81,15 +111,25 @@ def sendMessage(uname,session,cid,msg):
     else:
         return sendMsg
 
-def main():
-    token = getToken()
-    email=input("Enter the email id and password to log in : ")
-    
-    password = input("Password: ")
+def auth():
 
+    token = getToken()
+    email = input("Enter email id and password to log in :")
+    password = input()
     sessionID = getSessionID(email,password,token)
 
-    cid = getCID(sessionID)
+    return sessionID
+#def chat():
+
+
+def main():
+
+    #sessionID = auth()
+    global cid
+
+    sessionID = '8.222e5f6e8e73257012ca773f369e276a'
+
+    getCID(sessionID)
 
     if sessionID!=False:
 
@@ -101,8 +141,7 @@ def main():
 
         if response!=True:
             print(response)
-    
     else:
         print("Authentication Failed")
-
 main()
+#getCID(sessionID)
