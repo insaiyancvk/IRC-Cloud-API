@@ -52,7 +52,7 @@ def getCID(sessionID):
 
     for event in daBackloginJSON:
 
-        if event['eid'] == eid and event['type'] == 'buffer_msg':
+        if event['eid'] == eid and event['type'] == 'buffer_msg':  #condition for printing the unread message
             msg = event['msg']
             if neid!=eid:
                 neid=eid
@@ -123,8 +123,6 @@ def main():
 
     sessionID = auth()
     global cid
-
-    sessionID = '8.222e5f6e8e73257012ca773f369e276a'
 
     getCID(sessionID)
 
